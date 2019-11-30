@@ -1,0 +1,46 @@
+#cas rigide symétrique
+D1=2*0.79
+D0=2
+P0=10113
+P2=100
+L0=40
+L1=40*0.79
+
+from math import*
+import numpy as np
+print "Résolution du système d'équations par la méthode Gauss -Seidel"
+
+A=[[D1**4 , -128*mu*L1/np.pi , 0 ],
+   [ D1**4 , 0 ,  128*mu*L1/np.pi ],
+   [ 0 , 2 , -1 ]]
+# A est une matrice du système définie ligne par ligne
+b=[ (D2**4)*P2 , (D0**4)*P0 ,0]              
+x=[0,0, 0]
+#  x est un vecteur qui definie les valeurs initiales de de x1 et x2(remarque xi est réel
+tol=1e-16
+# tol définie la précision seuil
+err=0
+itmax=300000
+# itmax est le nombre d'itération maximal
+s=0
+w=0.1
+# 0 <w <1 , est un facteur de relaxation qui modifie un peu l'algo, c'est pour amener
+# le système à converger.En effet il se peut que le système ne converge pas pour certaine matrice
+for k in range (itmax):
+      err=0
+      for i in range(len(A)):
+            s=0
+            xprim=x[i]
+            for j in range(len(A)):
+                  if i!=j:
+                        s=s+A[i][j]*x[j]
+            x[i]=w*((b[i]-s)/A[i][i])+(1-w)*x[i]
+            err=err+fabs((x[i]-xprim))
+      if err<tol:
+            print('Nombre d\' iterations',k,'Erreur',float(err))
+            print " la solution de votre système est:",x
+            break
+else:
+      print "le sytème ne converge pas. Essayer de jouer sur w, ou sur tol ou sur itmax ou sur x"
+      print "voir en premier tol(penser à augmenter la puissance si trop petit), puis itmax, puis w (ne pas depasser 0.5)"
+    
